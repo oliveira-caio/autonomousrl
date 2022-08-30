@@ -4,14 +4,18 @@ import gym
 import numpy as np
 import cv2
 
-def play_video(filename, width=None):
-    encoded = base64.b64encode(io.open(filename, 'r+b').read())
-    video_width = 'width="' + str(width) + '"' if width is not None else ''
-    embedded = HTML(data='''
-        <video controls {0}>
-            <source src="data:video/mp4;base64,{1}" type="video/mp4" />
-        </video>'''.format(video_width, encoded.decode('ascii')))
-    return embedded
+
+class LossHistory:
+    def __init__(self, smoothing_factor=0.0):
+        self.alpha = smoothing_factor
+        self.loss = []
+
+    def append(self, value):
+        self.loss.append(self.alpha*self.loss[-1] + (1-self.alpha)*value
+                         if len(self.loss)>0 else value)
+
+    def get(self):
+        return self.loss
 
 
 def preprocess_pong(image):
