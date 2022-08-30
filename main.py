@@ -6,8 +6,20 @@ import shutil
 import subprocess
 import tensorflow as tf
 import tensorflow_probability as tfp
-import util
 import vista
+
+
+class LossHistory:
+    def __init__(self, smoothing_factor=0.0):
+        self.alpha = smoothing_factor
+        self.loss = []
+
+    def append(self, value):
+        self.loss.append(self.alpha*self.loss[-1] + (1-self.alpha)*value
+                         if len(self.loss)>0 else value)
+
+    def get(self):
+        return self.loss
 
 
 class Memory:
@@ -185,13 +197,13 @@ def run_model(stream, i_step=0, num_episodes=1):
 # setting variables
 learning_rate = 1
 optimizer = tf.keras.optimizers.Adam(learning_rate)
-smoothed_reward = util.LossHistory(smoothing_factor=0.95)
+smoothed_reward = LossHistory(smoothing_factor=0.95)
 trace_root = "./vista_traces"
 trace_path = [
     "20210726-154641_lexus_devens_center",
-    # "20210726-155941_lexus_devens_center_reverse",
-    # "20210726-184624_lexus_devens_center",
-    # "20210726-184956_lexus_devens_center_reverse",
+    "20210726-155941_lexus_devens_center_reverse",
+    "20210726-184624_lexus_devens_center",
+    "20210726-184956_lexus_devens_center_reverse",
 ]
 trace_path = [os.path.join(trace_root, p) for p in trace_path]
 world = vista.World(trace_path, trace_config={'road_width': 4})
@@ -219,7 +231,6 @@ max_std = 0.1
 memory = Memory()
 stream = VideoStream()
 vista_reset()
-exit()
 train_model(num_episodes=2)
 run_model(stream=stream)
 stream.save("trained_policy.mp4")
