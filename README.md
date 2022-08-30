@@ -1,2 +1,3 @@
 # autonomousrl
-an algorithm to control autonomous vehicles implemented using reinforcement learning
+
+An algorithm to control autonomous vehicles using reinforcement learning. Used the [VISTA](https://vista.csail.mit.edu/) simulation engine to get the input. VISTA data is built from human-collected driving traces, where a trace is the data collected from a single driving run. In this code I used RGB camera data from the pov of the driver looking out at the road: the camera collects this data as the car drives around. This is a policy gradient method that uses a Convolutional Neural Network to process the RGB input and as output it predicts, roughly speaking, the curvature the steering wheel should turn. An example of a trained model: https://youtu.be/nxtT0-Lxv8k
